@@ -69,4 +69,4 @@ Este projeto está licenciado sob a licença MIT. Consulte o arquivo `LICENSE` p
 
 **Deploy do Projeto**
 
-**Link do Projeto:** 
+**Link do Projeto:** [https://appvmovies.netlify.app/](https://appvmovies.netlify.app/)
