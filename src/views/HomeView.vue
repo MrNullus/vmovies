@@ -1,24 +1,71 @@
 <template>
-  <div class="home">
-    <div class="feature-card">
-      <router-link to="/movie/tt0409591">
-        <img
-            src="https://www.uvimg.com/images/shfqhw7567315.jpg"
-            alt="Naruto Poster" class="featured-img"/>
-        <div class="detail">
-          <h3>Naruto</h3>
-          <p>Naruto Uzumaki, um ninja adolescente travesso, luta enquanto procura por reconhecimento e sonha em se
-            tornar o Hokage, o líder da vila e o ninja mais forte.</p>
-        </div>
-      </router-link>
+  <main class="home">
+<!--    <div class="feature-card">-->
+<!--      <router-link to="/movie/tt0409591">-->
+<!--        <img src="https://m.media-amazon.com/images/M/MV5BZmQ5NGFiNWEtMmMyMC00MDdiLTg4YjktOGY5Yzc2MDUxMTE1XkEyXkFqcGdeQXVyNTA4NzY1MzY@._V1_SX300.jpg" alt="Naruto Poster" class="featured-img" />-->
+<!--        <div class="detail">-->
+<!--          <h3>Naruto</h3>-->
+<!--          <p>Naruto Uzumaki, a mischievous adolescent ninja, struggles as he searches for recognition and dreams of becoming the Hokage, the village's leader and strongest ninja.</p>-->
+<!--        </div>-->
+<!--      </router-link>-->
+<!--    </div>-->
+
+    <form @submit.prevent="SearchMovies()" class="search-box">
+      <input
+          type="text"
+          placeholder="What are you looking for?"
+          v-model="search"
+      />
+      <input
+          type="submit"
+          value="Search"
+      />
+    </form>
+
+    <div class="movies-list">
+      <div class="movie" v-for="movie in movies" :key="movie.imdbID">
+        <router-link :to="'/movie/' + movie.imdbID" class="movie-link">
+          <div class="product-image">
+            <img :src="movie.Poster" alt="Movie Poster" />
+            <div class="type">{{ movie.Type }}</div>
+          </div>
+          <div class="detail">
+            <p class="year">{{ movie.Year }}</p>
+            <h3>{{ movie.Title }}</h3>
+          </div>
+        </router-link>
+      </div>
     </div>
-  </div>
+
+  </main>
 </template>
 
 <script>
+import { ref } from 'vue';
+import env from '@/env.js'
+
 export default {
-  name : 'HomeView',
-  components : {}
+  setup () {
+    const search = ref("");
+    const movies = ref([]);
+
+    const SearchMovies = () => {
+      if (search.value != "") {
+        fetch(`${env.URL_API}/?apikey=${env.apikey}&s=${search.value}`)
+            .then(response => response.json())
+            .then(data => {
+              movies.value = data.Search;
+              search.value = "";
+            });
+      }
+    }
+
+    return {
+      search,
+      movies,
+      SearchMovies
+    }
+  }
 }
 </script>
 
@@ -40,30 +87,20 @@ export default {
     .detail {
       position: absolute;
       left: 0;
+      height: 100%;
       right: 0;
       bottom: 0;
-      background-color: rgba(0, 30, 15, 0.68);
+      background-color: rgba(0, 0, 0, 0.6);
       padding: 16px;
       z-index: 1;
-      height: 100%;
-      display: flex;
-      justify-content: center;
-      align-content: center;
-      flex-wrap: nowrap;
-      flex-direction: column;
-      align-items: center;
 
       h3 {
-        color: #FFF;
-        font-size: 3rem;
-        margin-bottom: 33px;
-        font-weight: 600;
-        font-family: "Fascinate Inline", system-ui;
+        color:#FFF;
+        margin-bottom: 16px;
       }
 
       p {
         color: #FFF;
-        font-weight: 500;
       }
     }
   }
@@ -143,6 +180,7 @@ export default {
             width: 100%;
             height: 275px;
             object-fit: cover;
+            opacity: 0.5;
           }
 
           .type {
